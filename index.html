@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simone Teams</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+
+  <!-- AOS CSS -->
+  <link
+    href="https://unpkg.com/aos@2.3.1/dist/aos.css"
+    rel="stylesheet"
+  />
+
+  <!-- VanillaTilt JS -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.2/dist/vanilla-tilt.min.js"
+    defer
+  ></script>
+
+  <!-- Google Font -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* ==== Theme & Colors ==== */
+    :root {
+      --bg-start: #ffdbb8;
+      --bg-end:   #000000;
+      --btn-color: #d8aa9e;
+      --btn-shadow: rgba(0, 0, 0, 0.2);
+    }
+    body[data-theme="light"] {
+      --bg-start: #ffdbb8;
+      --bg-end:   #686868;
+      --btn-color: #d8aa9e;
+    }
+
+    /* ==== Global & Animated Background ==== */
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(45deg, var(--bg-start), var(--bg-end));
+      background-size: 400% 400%;
+      animation: gradientBG 20s ease infinite;
+      color: #fff !important;
+      overflow-x: hidden;
+      position: relative;
+    }
+    @keyframes gradientBG {
+      0%   { background-position:   0%   50%; }
+      50%  { background-position: 100%   50%; }
+      100% { background-position:   0%   50%; }
+    }
+
+    /* ==== Force All Text White ==== */
+    h1, h2, h3, h4, h5, p, li, a, button {
+      color: #fff !important;
+    }
+
+    /* ==== Glassy Scrollbar ==== */
+    ::-webkit-scrollbar { width: 12px; }
+    ::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      backdrop-filter: blur(8px);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.3);
+      border-radius: 10px;
+    }
+
+    /* ==== Button 90 Styling & Animation ==== */
+    .button-90 {
+      position: relative;
+      display: inline-block;
+      color: #fff;
+      padding: 15px 25px;
+      border-radius: 100px;
+      background-color: var(--btn-color);
+      background-image:
+        radial-gradient(93% 87% at 87% 89%, rgba(0,0,0,0.23) 0%, transparent 86.18%),
+        radial-gradient(66% 87% at 26% 20%, rgba(255,255,255,0.41) 0%, rgba(255,255,255,0) 70%);
+      box-shadow: 2px 19px 31px var(--btn-shadow);
+      font-weight: bold;
+      font-size: 16px;
+      border: 0;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      overflow: hidden;
+    }
+    .button-90::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 200%; height: 200%;
+      background: rgba(255,255,255,0.15);
+      transform: translate(-50%, -50%) scale(0);
+      border-radius: 50%;
+      opacity: 0;
+      transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+      pointer-events: none;
+    }
+    .button-90:hover {
+      transform: scale(1.05);
+      box-shadow: 4px 24px 40px var(--btn-shadow);
+    }
+    .button-90:active::before {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      transition: 0s;
+    }
+    @keyframes shine {
+      to { transform: translateX(200%); }
+    }
+    .button-90::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(255,255,255,0.3) 50%,
+        transparent 100%
+      );
+      animation: shine 2s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    /* ==== Glassmorphism Panels ==== */
+    .glass {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
+      backdrop-filter: blur(15px);
+      border-radius: 1rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .glass:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+
+    /* ==== Gradient Text Animation ==== */
+    .text-gradient {
+      background: linear-gradient(
+        90deg,
+        var(--bg-start),
+        var(--bg-end),
+        var(--bg-start)
+      );
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientMove 5s ease infinite;
+    }
+    @keyframes gradientMove {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position:100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* ==== Waves Divider ==== */
+    .wave { overflow: hidden; line-height: 0; }
+    .wave svg { width: 100%; height: 80px; display: block; }
+
+    /* ==== Typewriter & Bounce ==== */
+    .typewriter h1 {
+      overflow: hidden; white-space: nowrap;
+      border-right: .15em solid var(--bg-end);
+      animation: typing 3s steps(40,end), blink .75s step-end infinite;
+      font-size: 3rem; font-weight: 700;
+    }
+    @keyframes typing { from { width: 0 } to { width: 100% } }
+    @keyframes blink { 50% { border-color: transparent } }
+
+    /* ==== Animated Underline ==== */
+    .section-title { position: relative; display: inline-block; }
+    .section-title::after {
+      content: '';
+      position: absolute;
+      left: 0; bottom: -6px;
+      width: 100%; height: 3px;
+      background: var(--bg-end);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.6s ease;
+    }
+    .aos-animate.section-title::after { transform: scaleX(1); }
+  </style>
+</head>
+
+<body>
+  <!-- Theme Switcher -->
+  <div class="theme-switcher position-fixed top-0 end-0 m-3 p-2 glass">
+    <select id="theme-select" class="form-select form-select-sm">
+      <option value="dark">Dark</option>
+      <option value="light">Light</option>
+    </select>
+  </div>
+
+  <div class="container py-5 position-relative" style="z-index:1;">
+    <!-- Header -->
+    <header class="text-center mb-5">
+      <div class="typewriter" data-aos="fade-down" data-aos-duration="1200">
+        <h1 class="text-gradient bounce">Simone Teams</h1>
+      </div>
+      <p class="lead" data-aos="fade-up" data-aos-delay="300">
+        Crafting immersive digital experiences with glassmorphism & next-gen animations
+      </p>
+    </header>
+
+    <!-- Wave Divider -->
+    <div class="wave">
+      <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+        <path
+          d="M0,24 C360,80 1080,0 1440,48 L1440,80 L0,80 Z"
+          fill="rgba(255,255,255,0.1)"
+        ></path>
+      </svg>
+    </div>
+
+    <!-- About Us -->
+    <section id="about" class="mb-5">
+      <h2 class="section-title text-gradient text-center mb-4" data-aos="fade-right">
+        About Us
+      </h2>
+      <div class="glass p-4" data-aos="zoom-in" data-aos-delay="200">
+        <p>Simone Teams blends code and art into sleek, glassmorphic interfaces that come alive with movement. Our collective thrives on innovation, collaboration, and pixel-perfect polish.</p>
+        <button
+          class="button-90 mt-3"
+          onclick="document.getElementById('team').scrollIntoView({ behavior: 'smooth' })"
+          data-aos="fade-up" data-aos-delay="400"
+        >Meet The Team</button>
+      </div>
+    </section>
+
+    <!-- Wave Divider -->
+    <div class="wave">
+      <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+        <path
+          d="M0,32 C480,0 960,64 1440,32 L1440,80 L0,80 Z"
+          fill="rgba(255,255,255,0.05)"
+        ></path>
+      </svg>
+    </div>
+
+    <!-- Our Mission -->
+    <section id="mission" class="mb-5">
+      <h2 class="section-title text-gradient text-center mb-4" data-aos="fade-left">
+        Our Mission
+      </h2>
+      <div class="glass p-4" data-aos="fade-up" data-aos-delay="300">
+        <ul class="mb-0">
+          <li data-aos="fade-up" data-aos-delay="400">Innovate with cutting-edge UI/UX</li>
+          <li data-aos="fade-up" data-aos-delay="500">Empower developers with beautiful tools</li>
+          <li data-aos="fade-up" data-aos-delay="600">Champion accessibility & performance</li>
+          <li data-aos="fade-up" data-aos-delay="700">Create memorable, delightful interactions</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Wave Divider -->
+    <div class="wave">
+      <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+        <path
+          d="M0,48 C360,16 1080,80 1440,40 L1440,80 L0,80 Z"
+          fill="rgba(255,255,255,0.1)"
+        ></path>
+      </svg>
+    </div>
+
+    <!-- Our Collaborators -->
+    <section id="team" class="mb-5">
+      <h2 class="section-title text-gradient text-center mb-4" data-aos="fade-up">
+        Our Collaborators
+      </h2>
+      <div class="row g-4 justify-content-center">
+        <!-- Labfox -->
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3"
+             data-aos="flip-left" data-aos-delay="200">
+          <div class="card glass text-center p-4 h-100 border-0" data-tilt data-tilt-max="15">
+            <img src="https://avatars.githubusercontent.com/Labfox"
+                 class="rounded-circle mb-3" alt="Labfox" width="100" height="100"/>
+            <h5>Labfox</h5>
+            <button
+              class="button-90 mt-2"
+              onclick="window.open('https://github.com/Labfox','_blank')"
+            >View Profile</button>
+          </div>
+        </div>
+
+        <!-- Armin -->
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3"
+             data-aos="flip-left" data-aos-delay="400">
+          <div class="card glass text-center p-4 h-100 border-0" data-tilt data-tilt-max="15">
+            <img src="https://avatars.githubusercontent.com/ArminGhassemi1390"
+                 class="rounded-circle mb-3" alt="Armin" width="100" height="100"/>
+            <h5>Armin Ghassemi</h5>
+            <button
+              class="button-90 mt-2"
+              onclick="window.open('https://github.com/ArminGhassemi1390','_blank')"
+            >View Profile</button>
+          </div>
+        </div>
+
+        <!-- Teresa -->
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3"
+             data-aos="flip-left" data-aos-delay="600">
+          <div class="card glass text-center p-4 h-100 border-0" data-tilt data-tilt-max="15">
+            <img src="https://avatars.githubusercontent.com/T3r3s4-MNE"
+                 class="rounded-circle mb-3" alt="Teresa" width="100" height="100"/>
+            <h5>Teresa</h5>
+            <button
+              class="button-90 mt-2"
+              onclick="window.open('https://github.com/T3r3s4-MNE','_blank')"
+            >View Profile</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center py-4" data-aos="fade-up" data-aos-delay="800">
+      &copy; 2025 Simone Teams • All rights reserved
+    </footer>
+  </div>
+
+  <!-- Bootstrap JS Bundle -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    defer
+  ></script>
+  <!-- AOS JS -->
+  <script
+    src="https://unpkg.com/aos@2.3.1/dist/aos.js"
+    defer
+  ></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      AOS.init({ once: true, duration: 800 });
+      VanillaTilt.init(document.querySelectorAll('[data-tilt]'), {
+        glare: true,
+        'max-glare': 0.3
+      });
+
+      // Button ripple
+      document.querySelectorAll('.button-90').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const rect = btn.getBoundingClientRect();
+          btn.style.setProperty('--x', `${e.clientX - rect.left}px`);
+          btn.style.setProperty('--y', `${e.clientY - rect.top}px`);
+        });
+      });
+
+      // Theme switcher
+      const select = document.getElementById('theme-select');
+      const saved = localStorage.getItem('theme') || 'dark';
+      document.body.setAttribute('data-theme', saved);
+      select.value = saved;
+      select.addEventListener('change', () => {
+        const theme = select.value;
+        document.body.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+      });
+    });
+  </script>
+</body>
+</html>
