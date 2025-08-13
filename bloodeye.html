@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BloodEye — Minecraft Server (2025)</title>
+  <meta name="description" content="BloodEye Minecraft server • Join the community on Discord • Smart assistant, status, and modern 2025 UI" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg-0:#05070d; --bg-1:#0b1220; --bg-2:#0f1a2c; --text:#e8f0ff; --muted:#9fb2cc;
+      --pri:#6a8bff; --pri-2:#5865F2; --acc:#2df27b; --warn:#ffd166; --danger:#ff5b6e;
+      --glass: rgba(255,255,255,.04);
+      --card: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      --shadow: 0 12px 40px rgba(0,0,0,.55);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;background:radial-gradient(1200px 600px at 10% 10%, #0b1330 0%, #05070d 55%) fixed, radial-gradient(800px 600px at 90% 0%, rgba(88,101,242,.18), transparent 60%) fixed; color:var(--text); overflow-x:hidden}
+
+    /* animated block grid for Minecraft vibe */
+    .bg-grid{position:fixed; inset:0; pointer-events:none; opacity:.12; z-index:0; background-size:64px 64px; background-image:linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(0deg, rgba(255,255,255,.05) 1px, transparent 1px); animation:bgshift 40s linear infinite}
+    @keyframes bgshift{from{background-position:0 0,0 0} to{background-position:512px 512px, -512px -512px}}
+
+    .wrap{position:relative; z-index:2; max-width:1200px; margin:42px auto; padding:24px; display:grid; grid-template-columns:1.35fr .85fr; gap:24px}
+    @media (max-width:980px){.wrap{grid-template-columns:1fr}}
+
+    header.site{grid-column:1/-1; display:flex; gap:16px; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--card); border:1px solid var(--glass); border-radius:18px; backdrop-filter:blur(10px) saturate(120%); box-shadow:var(--shadow); animation:fadeIn .8s ease both}
+    .brand{display:flex; align-items:center; gap:14px}
+    .logo{display:grid; place-items:center; width:76px; height:76px; border-radius:18px; background:linear-gradient(135deg, var(--pri-2), #2b2f9f); position:relative; overflow:hidden; box-shadow:var(--shadow); cursor:pointer; transition:transform .35s cubic-bezier(.2,.9,.3,1)}
+    .logo:hover{transform:translateY(-6px) rotate(-2deg) scale(1.03)}
+    .logo svg{width:50px; height:50px; filter:drop-shadow(0 10px 24px rgba(0,0,0,.55))}
+    .logo::after{content:""; position:absolute; inset:-40%; background:conic-gradient(from 0deg, transparent 0 70%, rgba(255,255,255,.15) 70% 75%, transparent 75% 100%); animation:spin 8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .title h1{margin:0; font-size:28px; letter-spacing:-.3px}
+    .title p{margin:6px 0 0; color:var(--muted); font-size:13px}
+
+    .controls{display:flex; gap:10px; flex-wrap:wrap}
+    .btn{display:inline-flex; align-items:center; gap:10px; padding:10px 14px; border-radius:12px; border:0; font-weight:800; cursor:pointer; transition:transform .14s, box-shadow .14s; box-shadow:var(--shadow)}
+    .btn:hover{transform:translateY(-4px)}
+    .btn-pri{background:linear-gradient(90deg,var(--pri-2),#6b74ff); color:white}
+    .btn-copy{background:linear-gradient(90deg,var(--warn),#ff7b5f); color:#201108}
+    .btn-ghost{background:rgba(255,255,255,.06); color:var(--text)}
+
+    .card{background:var(--card); border:1px solid var(--glass); border-radius:18px; padding:18px; backdrop-filter:blur(10px) saturate(120%); box-shadow:var(--shadow); animation:fadeIn .9s ease both}
+
+    .hero{display:flex; flex-direction:column; gap:16px}
+    .banner{position:relative; min-height:280px; border-radius:14px; overflow:hidden; background:linear-gradient(180deg, rgba(10,10,15,.25), rgba(0,0,0,.5)), url('') center/cover no-repeat; display:flex; align-items:flex-end}
+    .banner .inner{display:flex; justify-content:space-between; align-items:center; gap:12px; width:100%; padding:16px}
+    .server-address{font-weight:800; font-size:18px; letter-spacing:.6px; background:linear-gradient(90deg,#ffdede,#ff9b9b); -webkit-background-clip:text; background-clip:text; color:transparent}
+
+    .particles{position:absolute; inset:0; pointer-events:none; mix-blend-mode:screen}
+    .particle{position:absolute; border-radius:2px; opacity:.08; animation:up linear infinite}
+    @keyframes up{0%{transform:translateY(40px) scale(1)}100%{transform:translateY(-160px) scale(.8); opacity:0}}
+
+    .info-row{display:flex; justify-content:space-between; align-items:center; gap:10px; color:#cfe1ff; font-size:14px}
+    .status-dot{width:12px; height:12px; border-radius:50%; box-shadow:0 2px 6px rgba(0,0,0,.6)}
+    .dot-on{background:linear-gradient(90deg,#6ef47a,#00b86b)}
+    .dot-off{background:linear-gradient(90deg,#ff8b8b,#ff4343)}
+
+    .features{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+    .feature{padding:10px; border-radius:10px; background:rgba(255,255,255,.04); color:#cfe6ff; font-size:14px}
+
+    .sidebar{display:flex; flex-direction:column; gap:16px}
+
+    .ad{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px; border-radius:14px; background:linear-gradient(90deg, rgba(88,101,242,.18), rgba(91,112,255,.08)); border:1px solid rgba(88,101,242,.18); position:relative; overflow:hidden}
+    .ad .pill{padding:6px 10px; border-radius:999px; background:linear-gradient(90deg,var(--warn),#ff7b5f); color:#2a0a00; font-weight:800; animation:pulse 2.2s infinite}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+
+    footer{grid-column:1/-1; text-align:center; margin-top:16px; color:var(--muted)}
+    footer .rev{font-weight:700}
+
+    /* Chatbot */
+    .ai-launch{position:fixed; right:18px; bottom:18px; z-index:50;}
+    .ai-btn{display:inline-flex; align-items:center; gap:10px; padding:14px 16px; border-radius:14px; border:1px solid var(--glass); background:linear-gradient(90deg,var(--pri-2),#6b74ff); color:white; box-shadow:var(--shadow); cursor:pointer; font-weight:800; transition:transform .16s}
+    .ai-btn:hover{transform:translateY(-6px)}
+    .ai-panel{position:fixed; right:18px; bottom:80px; width:360px; max-height:70vh; display:none; flex-direction:column; gap:10px; background:var(--card); border:1px solid var(--glass); border-radius:16px; box-shadow:var(--shadow); backdrop-filter:blur(10px); overflow:hidden; z-index:60}
+    .ai-head{display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.06)}
+    .ai-log{padding:10px; overflow:auto}
+    .msg{display:flex; gap:8px; margin:8px 0}
+    .msg .b{padding:10px 12px; border-radius:12px; max-width:85%}
+    .msg.user .b{background:rgba(255,255,255,.08)}
+    .msg.ai .b{background:rgba(88,101,242,.18)}
+    .ai-input{display:flex; gap:8px; padding:10px; border-top:1px solid rgba(255,255,255,.06)}
+    .ai-input input{flex:1; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.12); background:rgba(0,0,0,.25); color:var(--text)}
+    .ai-input button{padding:10px 12px; border-radius:10px; border:0; font-weight:800; background:linear-gradient(90deg,var(--pri-2),#6b74ff); color:white; cursor:pointer}
+    .suggest{display:flex; gap:8px; flex-wrap:wrap}
+    .suggest button{padding:8px 10px; border-radius:999px; background:rgba(255,255,255,.06); color:var(--text); border:1px solid rgba(255,255,255,.06); cursor:pointer}
+
+    /* toggles */
+    .toggles{display:flex; gap:8px; flex-wrap:wrap}
+    .toggle{padding:8px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.05); cursor:pointer}
+
+    @keyframes fadeIn{from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:translateY(0)}}
+  </style>
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <main class="wrap">
+    <header class="site">
+      <div class="brand">
+        <!-- Clickable Discord logo linking to the BloodEye Discord -->
+        <a class="logo" href="https://discord.gg/9pafPTn8" target="_blank" rel="noopener" title="Join BloodEye Discord">
+          <svg viewBox="0 0 71 55" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs><linearGradient id="g1" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#9fb0ff"/><stop offset="1" stop-color="#5865F2"/></linearGradient></defs>
+            <path fill="url(#g1)" d="M60.104 4.5A58.4 58.4 0 0 0 45.86.5a41.1 41.1 0 0 0-1.98 4.1c-6.04-.9-12.08-.9-18.12 0A41.1 41.1 0 0 0 23.78.5 58.4 58.4 0 0 0 8.54 4.5C1.8 17.3.2 29.6 1.6 41.9c7.7 5.7 15.1 8.9 22.6 10.8 1.3-1.8 2.4-3.7 3.1-5.6-6.8-2.3-12.4-6-16.3-10.1 1.3-1.1 2.6-2.1 3.8-3a43.2 43.2 0 0 0 25.2 0c1.2.9 2.5 1.9 3.8 3-3.9 4.1-9.5 7.8-16.3 10.1.7 1.9 1.8 3.8 3.1 5.6 7.5-1.9 14.9-5.1 22.6-10.8 1.4-12.3-.2-24.6-7.9-37.4z"/>
+            <g transform="translate(18 14)" fill="#fff">
+              <ellipse cx="9" cy="12.5" rx="4.8" ry="6.5"/>
+              <ellipse cx="34" cy="12.5" rx="4.8" ry="6.5"/>
+            </g>
+          </svg>
+        </a>
+        <div class="title">
+          <h1>BloodEye — Minecraft Community</h1>
+          <p>Survival • Mini‑games • Friendly staff • Join the Discord to get started</p>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="btn btn-copy" id="copyIP">Copy IP</button>
+        <a class="btn btn-pri" href="https://discord.gg/9pafPTn8" target="_blank" rel="noopener">Join Server Discord</a>
+        <a class="btn btn-ghost" href="https://discord.gg/V9X5PTzkgb" target="_blank" rel="noopener" title="Developers Discord">Dev Discord</a>
+      </div>
+    </header>
+
+    <!-- Left column -->
+    <section class="hero card">
+      <div class="banner" id="banner">
+        <div class="particles" id="particles"></div>
+        <div class="inner">
+          <div>
+            <div style="font-size:14px;opacity:.9">Server</div>
+            <div class="server-address" id="serverAddress">BloodEye.aternos.me</div>
+            <div style="color:var(--muted); margin-top:6px">Type: Public • Mode: Survival</div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end">
+            <button class="btn btn-copy" id="copyIP2">Copy IP</button>
+            <button class="btn btn-pri" id="joinDiscord1">Join Discord</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap">
+        <div style="flex:1">
+          <div class="info-row">
+            <div>Server status</div>
+            <div><span class="status-dot dot-off" id="statusDot"></span> <span id="statusText" style="margin-left:8px">Checking…</span></div>
+          </div>
+          <div style="color:var(--muted); margin-top:6px">Players: <span id="players">—</span> • Version: <span id="version">—</span></div>
+        </div>
+        <div class="toggles">
+          <button class="toggle" id="toggleMotion">🌀 Motion: On</button>
+          <button class="toggle" id="toggleTheme">🌗 Theme</button>
+          <button class="toggle" id="howTo">❓ How to join</button>
+        </div>
+      </div>
+
+      <div>
+        <h3 style="margin:6px 0 8px">About BloodEye</h3>
+        <p style="color:var(--muted); line-height:1.6">BloodEye is a friendly Minecraft server focused on survival play, community events, and mini-games. Join our Discord to meet players, find events, and ask for help. Be kind and follow the server rules.</p>
+        <div class="features" style="margin-top:10px">
+          <div class="feature">⚔️ PvP optional</div>
+          <div class="feature">🏆 Weekly events</div>
+          <div class="feature">🛡️ Whitelist / Friendly staff</div>
+          <div class="feature">🔧 Plugins & mini-games</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right column -->
+    <aside class="sidebar">
+      <div class="card ad">
+        <div style="display:flex; flex-direction:column; gap:6px">
+          <div style="display:flex; gap:8px; align-items:center"><span class="pill">AD</span><b>Join our Discord community</b></div>
+          <div style="color:var(--muted); max-width:280px">Chat, get whitelist help, and join events. BloodEye official Discord.</div>
+        </div>
+        <a class="btn btn-pri" href="https://discord.gg/9pafPTn8" target="_blank" rel="noopener">Join →</a>
+      </div>
+
+      <div class="card">
+        <div style="display:flex; align-items:center; justify-content:space-between">
+          <div>
+            <div style="font-size:13px; color:#cfe1ff; font-weight:800">Server IP</div>
+            <div style="font-size:18px; margin-top:6px">BloodEye.aternos.me</div>
+            <div style="color:var(--muted); margin-top:6px">Click to copy, then paste in Minecraft's Direct Connect.</div>
+          </div>
+          <button class="btn btn-copy" id="copyIP3">Copy</button>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:12px">
+          <a class="btn btn-pri" href="https://discord.gg/9pafPTn8" target="_blank" rel="noopener">Server Discord</a>
+          <a class="btn btn-ghost" href="https://discord.gg/V9X5PTzkgb" target="_blank" rel="noopener">Dev Discord</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:800; margin-bottom:6px">Quick rules</div>
+        <div style="color:var(--muted)">Be respectful • No cheating • No griefing • Follow staff instructions</div>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:800; margin-bottom:6px">Server events</div>
+        <div style="color:var(--muted)">Saturdays: Build contest • Sundays: PvP tournament • Check Discord for times</div>
+      </div>
+    </aside>
+
+    <footer>
+      <div>Server: <b>BloodEye.aternos.me</b> • Discord: <a href="https://discord.gg/9pafPTn8" target="_blank" rel="noopener" style="color:#cfe1ff">Join</a> • Devs: <a href="https://discord.gg/V9X5PTzkgb" target="_blank" rel="noopener" style="color:#cfe1ff">Simhig Teams</a></div>
+      <div class="rev" style="margin-top:6px">2025 by Simhig Teams and BloodEye — All rights reversed.</div>
+    </footer>
+  </main>
+
+  <!-- AI Launcher -->
+  <div class="ai-launch">
+    <button class="ai-btn" id="openAI">🤖 Ask BloodEye</button>
+  </div>
+
+  <!-- AI Panel -->
+  <div class="ai-panel" id="aiPanel" role="dialog" aria-label="BloodEye Assistant">
+    <div class="ai-head">
+      <strong>BloodEye Assistant</strong>
+      <button class="toggle" id="closeAI">✖</button>
+    </div>
+    <div class="ai-log" id="aiLog"></div>
+    <div class="suggest" style="padding:0 10px 8px" id="aiSuggest"></div>
+    <div class="ai-input">
+      <input id="aiText" placeholder="Ask about status, rules, how to join, versions, events…" />
+      <button id="aiSend">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const MC_SERVER = 'BloodEye.aternos.me';
+    const SERVER_DISCORD = 'https://discord.gg/9pafPTn8'; // BloodEye official
+    const DEV_DISCORD = 'https://discord.gg/V9X5PTzkgb'; // Developers (Simhig Teams)
+
+    // BUTTONS
+    function copyIp(){
+      const t = MC_SERVER;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(t).then(()=> toast('IP copied!')).catch(()=> fallbackCopy(t));
+      } else { fallbackCopy(t) }
+    }
+    function fallbackCopy(text){
+      const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity=0; document.body.appendChild(ta); ta.select();
+      try{document.execCommand('copy'); toast('IP copied!')}catch(e){alert('Copy failed — '+text)}; document.body.removeChild(ta);
+    }
+    function toast(msg){
+      const el=document.createElement('div'); el.textContent=msg; el.style.position='fixed'; el.style.right='18px'; el.style.bottom='18px'; el.style.background='rgba(0,0,0,.6)'; el.style.color='white'; el.style.padding='10px 14px'; el.style.borderRadius='10px'; el.style.zIndex=9999; document.body.appendChild(el); setTimeout(()=> el.style.opacity='0',1600); setTimeout(()=> el.remove(),2200);
+    }
+    document.getElementById('copyIP').onclick = copyIp;
+    document.getElementById('copyIP2').onclick = copyIp;
+    document.getElementById('copyIP3').onclick = copyIp;
+    document.getElementById('joinDiscord1').onclick = ()=> window.open(SERVER_DISCORD, '_blank', 'noopener');
+
+    // STATUS (best-effort client side)
+    async function fetchStatus(){
+      const dot = document.getElementById('statusDot');
+      const text = document.getElementById('statusText');
+      const players = document.getElementById('players');
+      const versionEl = document.getElementById('version');
+      text.textContent = 'Checking…'; dot.className='status-dot dot-off';
+      try{
+        const res = await fetch('https://api.mcsrvstat.us/2/'+MC_SERVER, {cache:'no-store'});
+        const data = await res.json();
+        if(data && data.online){
+          dot.className='status-dot dot-on'; text.textContent='Online';
+          const online = data.players?.online ?? (Array.isArray(data.players?.list)? data.players.list.length : '—');
+          players.textContent = online;
+          versionEl.textContent = data.version || '—';
+          return {online:true, players:online, version:data.version||'—'}
+        } else {
+          dot.className='status-dot dot-off'; text.textContent='Offline'; players.textContent='0'; versionEl.textContent='—'; return {online:false}
+        }
+      }catch(e){ dot.className='status-dot dot-off'; text.textContent='Unavailable'; players.textContent='—'; versionEl.textContent='—'; return {online:null} }
+    }
+    fetchStatus();
+
+    // DECOR: banner particles & pixel SVG
+    (function decorateBanner(){
+      const banner = document.getElementById('banner');
+      const svg = encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='600' height='300'><rect width='100%' height='100%' fill='rgba(0,0,0,0.16)'/><g fill='rgba(255,255,255,0.03)'>${Array.from({length:140}).map((_,i)=>{const x=(i*43)%600; const y=(i*19)%300; const s=(i%3)+2; return `<rect x='${x}' y='${y}' width='${s}' height='${s}'/>`;}).join('')}</g></svg>`);
+      banner.style.backgroundImage = `linear-gradient(180deg, rgba(10,10,10,.22), rgba(0,0,0,.45)), url("data:image/svg+xml;utf8,${svg}")`;
+      const wrap = document.getElementById('particles');
+      const colors=['rgba(255,255,255,.06)','rgba(255,200,200,.05)','rgba(200,220,255,.05)'];
+      for(let i=0;i<24;i++){const p=document.createElement('div'); p.className='particle'; const size=Math.round(Math.random()*8)+2; p.style.width=size+'px'; p.style.height=size+'px'; p.style.left=(Math.random()*100)+'%'; p.style.top=(50+Math.random()*40)+'%'; p.style.background=colors[Math.floor(Math.random()*colors.length)]; p.style.animationDuration=(8+Math.random()*10)+'s'; p.style.animationDelay=(Math.random()*-6)+'s'; wrap.appendChild(p);} 
+    })();
+
+    // Motion & theme toggles
+    const motionBtn = document.getElementById('toggleMotion');
+    let motionOn = true;
+    motionBtn.onclick = ()=>{ motionOn = !motionOn; document.querySelectorAll('[style*="animation"]').forEach(el=>{ el.style.animationPlayState = motionOn? 'running':'paused'; }); motionBtn.textContent = `🌀 Motion: ${motionOn? 'On':'Off'}`; };
+    document.getElementById('howTo').onclick = ()=> alert(`How to join BloodEye:\n\n1) Open Minecraft (Java).\n2) Multiplayer → Direct Connection.\n3) Paste: ${MC_SERVER}.\n4) Connect.\n\nNeed help? Join Discord: ${SERVER_DISCORD}`);
+    document.getElementById('toggleTheme').onclick = ()=> document.body.classList.toggle('alt');
+
+    // === Minimal ML-ish Assistant ===
+    // A lightweight intent-matching assistant using TF-IDF style weighting & cosine similarity (client-side, offline).
+    const KB = [
+      {id:'status', utter:["server status","are you online","is server up","players online","uptime"], ans: async()=>{ const s=await fetchStatus(); if(s.online===true){ return `✅ Online — ${s.players} players • version ${s.version}. IP: ${MC_SERVER}` } if(s.online===false){ return `⛔ Offline right now. Try again later or ask in Discord: ${SERVER_DISCORD}` } return `⚠️ Status unavailable. Check Discord for updates: ${SERVER_DISCORD}`; }},
+      {id:'ip', utter:["what is ip","server ip","address","how do i join"], ans: ()=> `IP: ${MC_SERVER}\nIn Minecraft → Multiplayer → Direct Connection → paste IP.`},
+      {id:'rules', utter:["rules","what are the rules","can i grief","pvp","cheat"], ans: ()=> "Be respectful • No cheating • No griefing • Listen to staff • PvP optional in designated areas."},
+      {id:'events', utter:["events","tournament","build contest","when events"], ans: ()=> "Events: Saturdays build contest • Sundays PvP tournament. Check Discord for times."},
+      {id:'version', utter:["what version","mc version","server version"], ans: async()=>{ const s=await fetchStatus(); return s.version? `Server version: ${s.version}`: "Version info not available yet.";}},
+      {id:'whitelist', utter:["whitelist","how to whitelist","can i join"], ans: ()=> `Join Discord ${SERVER_DISCORD} and post your IGN in #whitelist per pinned instructions.`},
+      {id:'dev', utter:["developer","who made","simhig","dev discord"], ans: ()=> `Site by Simhig Teams. Dev Discord: ${DEV_DISCORD}`},
+      {id:'commands', utter:["what can you do","help","options","features"], ans: ()=> "I can: show status, give IP, rules, events, version, whitelist help, open Discord links, and more. Try: ‘status’, ‘rules’, or ‘how to join’."}
+    ];
+
+    // Build vocabulary
+    const vocab = new Map();
+    KB.forEach((k,ki)=> k.utter.forEach(u=> u.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean).forEach(t=>{ const key=t; if(!vocab.has(key)) vocab.set(key,{df:0,docs:new Set()}); vocab.get(key).docs.add(ki); })));
+    vocab.forEach(v=> v.df = v.docs.size);
+    const N = KB.length;
+
+    function vec(text){
+      const tf = new Map();
+      const toks = text.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+      toks.forEach(t=> tf.set(t, (tf.get(t)||0)+1));
+      const out = new Map();
+      tf.forEach((f,t)=>{
+        const v = vocab.get(t); if(!v) return; const idf = Math.log((N+1)/((v.df||1)+1))+1; out.set(t, f*idf);
+      });
+      return out;
+    }
+    function sim(a,b){
+      let dot=0, na=0, nb=0; a.forEach((va,ka)=>{na+=va*va; const vb=b.get(ka)||0; dot+=va*vb}); b.forEach(vb=> nb+=vb*vb); const den=Math.sqrt(na*nb)||1; return dot/den;
+    }
+    function bestIntent(q){
+      const vq = vec(q);
+      let best = {score:0, idx:0};
+      KB.forEach((k,ki)=>{
+        // compare to each utterance and keep best
+        let maxU = 0; k.utter.forEach(u=>{ const s = sim(vq, vec(u)); if(s>maxU) maxU=s; });
+        if(maxU>best.score) best={score:maxU, idx:ki};
+      });
+      return best;
+    }
+
+    // Chat UI
+    const aiBtn = document.getElementById('openAI');
+    const aiPanel = document.getElementById('aiPanel');
+    const aiLog = document.getElementById('aiLog');
+    const aiText = document.getElementById('aiText');
+    const aiSend = document.getElementById('aiSend');
+    const aiSuggest = document.getElementById('aiSuggest');
+    document.getElementById('closeAI').onclick = ()=> aiPanel.style.display='none';
+    aiBtn.onclick = ()=>{ aiPanel.style.display='flex'; if(!aiLog.dataset.boot){ bootAI(); aiLog.dataset.boot='1'; } };
+
+    function pushMsg(who, text){
+      const row=document.createElement('div'); row.className='msg '+who; const b=document.createElement('div'); b.className='b'; b.textContent=text; row.appendChild(b); aiLog.appendChild(row); aiLog.scrollTop = aiLog.scrollHeight;
+    }
+    function setSuggest(list){
+      aiSuggest.innerHTML='';
+      list.forEach(t=>{ const b=document.createElement('button'); b.textContent=t; b.onclick=()=> { aiText.value=t; sendAI(); }; aiSuggest.appendChild(b); });
+    }
+
+    async function bootAI(){
+      pushMsg('ai', 'Hey! I\'m the BloodEye assistant. Want to check server status, get the IP, or see rules?');
+      setSuggest(['status','how to join','rules','events','server version']);
+    }
+
+    async function replyAI(q){
+      const {score, idx} = bestIntent(q);
+      if(score < 0.12){
+        return "I\'m not sure yet. Try asking about: status, IP, rules, events, version, or whitelist.";
+      }
+      const k = KB[idx];
+      const ans = await k.ans();
+      // add quick actions depending on intent
+      if(k.id==='ip'){ setSuggest(['status','rules','events','dev discord']); }
+      if(k.id==='status'){ setSuggest(['server version','events','ip']); }
+      if(k.id==='dev'){ setSuggest(['server discord','status']); }
+      return ans;
+    }
+
+    async function sendAI(){
+      const q = aiText.value.trim(); if(!q) return; aiText.value=''; pushMsg('user', q); const a = await replyAI(q); pushMsg('ai', a);
+    }
+    aiSend.onclick = sendAI; aiText.addEventListener('keydown', e=>{ if(e.key==='Enter'){ sendAI(); }});
+
+    // extras: keyboard shortcuts
+    window.addEventListener('keydown', e=>{
+      if(e.key.toLowerCase()==='k' && (e.ctrlKey||e.metaKey)){ e.preventDefault(); aiBtn.click(); aiText.focus(); }
+    });
+
+    // initialize
+    document.getElementById('serverAddress').textContent = MC_SERVER;
+  </script>
+</body>
+</html>
